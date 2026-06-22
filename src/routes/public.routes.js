@@ -20,8 +20,9 @@ router.get('/:token', async (req, res) => {
       return res.status(404).send('File not found on disk');
     }
 
+    const encodedTitle = encodeURIComponent(doc.title);
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `inline; filename="${doc.title}.pdf"`);
+    res.setHeader('Content-Disposition', `inline; filename="${encodedTitle}.pdf"; filename*=UTF-8''${encodedTitle}.pdf`);
     fs.createReadStream(doc.processedFilePath).pipe(res);
   } catch (err) {
     console.error(err);

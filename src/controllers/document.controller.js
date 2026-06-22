@@ -199,8 +199,9 @@ exports.downloadDocument = async (req, res) => {
       return res.status(404).json({ error: 'File not found on disk' });
     }
 
+    const encodedTitle = encodeURIComponent(doc.title);
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="${doc.title}.pdf"`);
+    res.setHeader('Content-Disposition', `attachment; filename="${encodedTitle}.pdf"; filename*=UTF-8''${encodedTitle}.pdf`);
     fs.createReadStream(doc.processedFilePath).pipe(res);
   } catch (err) {
     console.error('[Documents Controller] Error downloading:', err);
