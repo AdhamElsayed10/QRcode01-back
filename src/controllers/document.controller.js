@@ -6,11 +6,11 @@ const { generateQRCode, embedQRInPDF } = require('../services/pdf.service');
 
 const prisma = new PrismaClient();
 
-// Fixed QR placement settings (X=48, Y=620, Size=50)
+// Fixed QR placement settings (X=490, Y=145, Size=50)
 const FIXED_SETTINGS = {
   position: 'custom',
-  customX: 48,
-  customY: 620,
+  customX: 490,
+  customY: 145,
   qrSize: 50,
   pageSelection: 'all',
 };
@@ -36,7 +36,9 @@ exports.uploadDocuments = async (req, res) => {
   for (const file of files) {
     const token = uuidv4();
     const qrUrl = `${baseUrl}/pdf/${token}`;
-    const title = path.basename(file.originalname, '.pdf').replace(/_/g, ' ');
+    // Decode originalname from latin1 to UTF-8 (multer encodes non-ASCII filenames as latin1)
+    const decodedName = Buffer.from(file.originalname, 'latin1').toString('utf8');
+    const title = path.basename(decodedName, '.pdf').replace(/_/g, ' ');
 
     // Create document record with PROCESSING status
     const doc = await prisma.document.create({
